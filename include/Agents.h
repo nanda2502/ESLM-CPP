@@ -16,10 +16,10 @@ public:
     arma::mat competences;
     arma::ivec ages;
 
-    Agents(const Graph* graph, const Params* params, int seed);
+    Agents(const Graph& graph, const Params& params, int seed);
 
 private:
-    void initialize(const Graph* graph, const Params* params, int seed);
+    void initialize(const Graph& graph, const Params& params, int seed);
 };
 
 #endif // AGENTS_H

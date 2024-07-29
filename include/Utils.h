@@ -3,6 +3,6 @@
 
 #include <random>
 
-double beta_distribution(double alpha, double beta, std::mt19937& gen);
+double beta_distribution(double mean, double variance, std::mt19937& gen);
 
 #endif // UTILS_H
