@@ -1,0 +1,8 @@
+[
+{
+  "directory": "D:/OneDrive/PhD/ESLM-cpp/build",
+  "command": "C:/llvm-mingw-20231128-msvcrt-x86_64/bin/c++.exe  @CMakeFiles/main.dir/includes_CXX.rsp -g -std=gnu++20 -o CMakeFiles/main.dir/main.cpp.obj -c D:/OneDrive/PhD/ESLM-cpp/main.cpp",
+  "file": "D:/OneDrive/PhD/ESLM-cpp/main.cpp",
+  "output": "CMakeFiles/main.dir/main.cpp.obj"
+}
+]
