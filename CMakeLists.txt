@@ -1,8 +1,32 @@
 cmake_minimum_required(VERSION 3.28)
 project(ESLM-CPP)
-set(CMAKE_CXX_STANDARD 20)
-include_directories("C:/Program Files (x86)/igraph/include/igraph" "E:/include/armadillo" "C:/OpenBLAS/include")
-link_directories("C:/Program Files (x86)/igraph/lib" "C:/Program Files/OpenBLAS/lib")
 
-add_executable(main main.cpp)
-target_link_libraries(main igraph openblas pthread)
+set(CMAKE_CXX_STANDARD 20)
+
+
+set(CMAKE_C_COMPILER "E:/msys/mingw64/bin/gcc.exe")
+set(CMAKE_CXX_COMPILER "E:/msys/mingw64/bin/g++.exe")
+
+set(CMAKE_BUILD_TYPE Release)
+set(CMAKE_CXX_FLAGS "${CMAKE_CXX_FLAGS} -O2 -Wall")
+
+include_directories(
+    "${CMAKE_SOURCE_DIR}/include"
+    "E:/msys/mingw64/include"
+)
+
+link_directories(
+    "E:/msys/mingw64/lib"
+)
+
+set(ARMADILLO_INCLUDE_DIR "E:/msys/mingw64/include")
+set(ARMADILLO_LIBRARY "E:/msys/mingw64/lib/libarmadillo.dll.a")
+
+find_package(Armadillo REQUIRED)
+
+# Gather all source files
+file(GLOB SOURCES "src/*.cpp")
+
+add_executable(main ${SOURCES})
+target_include_directories(main PRIVATE "E:/msys/mingw64/include" "${CMAKE_SOURCE_DIR}/include")
+target_link_libraries(main igraph pthread ${ARMADILLO_LIBRARIES})

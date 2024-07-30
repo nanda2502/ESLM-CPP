@@ -1,13 +1,14 @@
 #ifndef AGENTS_H
 #define AGENTS_H
 
-#include <Types.h>
+
 #include <tuple>
 #include <random>
 #include <unordered_map>
 #include <armadillo>
 #include "Graph.h"
 #include "Utils.h"
+#include "Params.h"
 
 class Agents {
 public:

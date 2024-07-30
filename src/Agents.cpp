@@ -6,7 +6,7 @@ Agents::Agents(const Graph& graph, const Params& params, int seed) {
 
 void Agents::initialize(const Graph& graph, const Params& params, int seed) {
     int num_nodes = graph.adjMat.n_cols;
-    int n = params.n;
+    int n = P(params, "n");
 
     arma::vec indegree = arma::sum(graph.adjMat, 0).t();
     arma::vec normalized_indegree = indegree / arma::accu(indegree);
@@ -15,17 +15,14 @@ void Agents::initialize(const Graph& graph, const Params& params, int seed) {
     competences.set_size(n, num_nodes);
     std::mt19937 gen(seed);
 
-    for (arma::uword i = 0; i < num_nodes; ++i) {
-        double mean = avg_competence(i);
-        for (arma::uword j = 0; j < n; ++j) {
-            competences(j, i) = beta_distribution(mean, params.competences_var, gen);
-        }
-    }
-
+    
     node_weights.set_size(n, num_nodes);
     for (arma::uword i = 0; i < num_nodes; ++i) {
+        double mean = avg_competence(i);
+        std::normal_distribution<> normal_dist(mean, P(params, "competences_sd"));
+        
         for (arma::uword j = 0; j < n; ++j) {
-            node_weights(j, i) = 2 * beta_distribution(params.node_mean, params.node_var, gen);
+            competences(j, i) = normal_dist(gen);
         }
     }
 
@@ -34,7 +31,12 @@ void Agents::initialize(const Graph& graph, const Params& params, int seed) {
         for (arma::uword i = 0; i < num_nodes; ++i) {
             for (arma::uword j = 0; j < num_nodes; ++j) {
                 double mean = graph.adjMat(i, j);
-                edge_weights(slice, i, j) = beta_distribution(mean, params.edge_var, gen);
+                if (mean > 0) {  // Only apply Gaussian if there's an edge
+                    std::normal_distribution<> dist(mean, P(params, "agent_edge_sd"));
+                    edge_weights(slice, i, j) = dist(gen);
+                } else {
+                    edge_weights(slice, i, j) = 0; // No edge, so weight is zero
+                }
             }
         }
     }
@@ -44,7 +46,7 @@ void Agents::initialize(const Graph& graph, const Params& params, int seed) {
     for (arma::uword i = 0; i < n; ++i) {
         double competence_sum = arma::accu(competences.row(i));
         double random_component = uniform_dist(gen);
-        double cor_age_competence = params.cor_age_competence;
+        double cor_age_competence = P(params, "cor_age_competence");
         ages(i) = static_cast<int>((cor_age_competence * competence_sum + (1 - cor_age_competence) * random_component) * 100);
     }
 }

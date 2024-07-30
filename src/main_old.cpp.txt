@@ -1,0 +1,62 @@
+#include "Payoffs.h"
+#include "LearningDecision.h"
+#include "competenceUpdate.h"
+#include "Graph.h"
+#include "Agents.h"
+#include "Assortment.h"
+#include <iostream> 
+#include <cstdlib>
+
+Params createParams(int assortment) {
+    return Params{
+        .t = 10,
+        .num_nodes = 16,
+        .n = 10,
+        .m = 2,
+        .edge_mean = 0.5,
+        .edge_var = 0.05,
+        .edge_threshold = 0.1,
+        .payoffs_mean = 0.5,
+        .competences_sd = 0.05,
+        .node_mean = 0.5,
+        .node_var = 0.05,
+        .agent_edge_sd = 0.05,
+        .cor_age_competence = 0.5,
+        .experience_bias = 0.0,
+        .assortment =  assortment
+    };
+}
+
+int main(int arc, char* argv[]) {
+    int assortment = std::atoi(argv[1]);
+    Params params = createParams(assortment);
+    int seed = std::atoi(argv[2]);
+    Graph graph(params, seed);
+    Agents agents(graph, params, seed);
+    PayoffData payoff_data(params);
+    
+    std::cout << graph.adjMat << std::endl;
+
+    arma::umat groups = Assortment::createAssortment(agents, params); 
+
+    for (int time_step = 0; time_step < P(params, "t"); ++time_step) {
+        arma::ivec choices = chooseActions(seed, time_step, payoff_data, params);
+        std::cout << "Step " << time_step << " - Actions chosen, Size: " << choices.n_rows << "x" << choices.n_cols << std::endl;
+        
+        updatePayoffs(time_step, choices, agents, payoff_data);
+        std::cout << "Step " << time_step << " - Payoffs updated" << std::endl;
+        
+        arma::ivec learning_choices = learnSocially(time_step, payoff_data, groups, params, seed);
+        std::cout << "Step " << time_step << " - Learning choices made, Size: " << learning_choices.n_rows << "x" << learning_choices.n_cols << std::endl;
+        
+        updateCompetences(agents, learning_choices, graph);
+        std::cout << "Step " << time_step << " - Competences updated" << std::endl;
+    }
+
+    std::string choices_filename = "../data/choices_" + std::to_string(assortment) + "_" + std::to_string(seed) + ".csv";
+    std::string payoffs_filename = "../data/payoffs_" + std::to_string(assortment) + "_" + std::to_string(seed) + ".csv";
+    payoff_data.saveToCSV("choices.csv", "payoffs.csv");
+    std::cout << "Data saved to CSV" << std::endl;
+
+    return 0;
+}
