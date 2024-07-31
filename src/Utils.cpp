@@ -1,5 +1,6 @@
 #include "Utils.h"
 #include <stdexcept>
+#include <random>
 
 double beta_distribution(double mean, double variance, std::mt19937& gen) {
     if (mean <= 0 || mean >= 1) throw std::invalid_argument("Mean must be between 0 and 1");

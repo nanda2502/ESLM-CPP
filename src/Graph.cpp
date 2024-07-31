@@ -1,23 +1,27 @@
 #include "Graph.h"
+#include "Utils.h"
+#include <random>
 
-Graph::Graph(const Params& params, int seed) {
-    initialize(params, seed);
+Graph::Graph(const Params& params) {
+    initialize(params);
     createPayoffs();
     populateParents();
 }
 
-void Graph::initialize(const Params& params, int seed) {
-    arma::umat edges(P(params, "num_nodes") * (P(params, "num_nodes") - 1) / 2, 2);
+void Graph::initialize(const Params& params) {
+    arma::umat edges(P(params, "num_nodes") * (P(params, "num_nodes") - 1), 2); 
     int idx = 0;
-    for (int i = 1; i <= P(params, "num_nodes"); ++i) {
-        for (int j = i + 1; j <= P(params, "num_nodes"); ++j) {
-            edges(idx, 0) = i - 1;
-            edges(idx, 1) = j - 1;
-            idx++;
+    for (int i = 0; i < P(params, "num_nodes"); ++i) {
+        for (int j = 0; j < P(params, "num_nodes"); ++j) {
+            if (i != j) { // Avoid self-loops
+                edges(idx, 0) = i;
+                edges(idx, 1) = j;
+                idx++;
+            }
         }
     }
-
-    std::mt19937 gen(seed);
+    std::random_device rd;
+    std::mt19937 gen(rd());
     
     arma::vec weights(edges.n_rows);
     for (arma::uword i = 0; i < weights.n_elem; ++i) {
@@ -34,9 +38,19 @@ void Graph::initialize(const Params& params, int seed) {
 }
 
 void Graph::createPayoffs() {
+    std::random_device rd;
+    std::mt19937 gen(rd());
+    std::uniform_real_distribution<> dist(0.0, 1.0);
+    node_payoffs = arma::vec(adjMat.n_cols);
+    for (arma::uword i = 0; i < node_payoffs.n_elem; ++i) {
+        node_payoffs(i) = dist(gen);
+    }
+}
+
+/* void Graph::createPayoffs() {
     arma::vec colSums = arma::sum(adjMat, 0).t();
     node_payoffs = colSums / arma::accu(colSums);
-}
+} */
 
 void Graph::populateParents() {
     parents.set_size(adjMat.n_cols);

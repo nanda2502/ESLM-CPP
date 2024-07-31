@@ -2,7 +2,6 @@
 #define Payoffs_H
 
 #include <armadillo>
-#include <random>
 #include "Agents.h"
 
 struct PayoffData {
@@ -24,7 +23,7 @@ struct PayoffData {
  * @param params Reference to the Params object containing simulation parameters.
  * @return An arma::ivec containing the selected actions for each agent.
  */
-arma::ivec chooseActions(int seed, int time_step, PayoffData& data, const Params& params);
+arma::ivec chooseActions(int time_step, PayoffData& data, const Params& params);
 
 /**
  * Updates the `PayoffData` object by recording the choices and

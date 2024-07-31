@@ -8,6 +8,8 @@ struct Params {
     std::map<std::string, double> params;
 };
 
+Params createParams(int argc, char* argv[]);
+
 #define P(params, key) (params.params.at(key))
 
 #endif // PARAMS_H

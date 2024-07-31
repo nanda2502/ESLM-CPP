@@ -1,4 +1,5 @@
 #include "Agents.h"
+#include <random>
 #include "Payoffs.h"
 
 PayoffData::PayoffData(const Params& params)
@@ -18,13 +19,14 @@ void PayoffData::saveToCSV(int argc, char* argv[]) {
     payoffs.save(payoffs_filename, arma::csv_ascii);
 }
 
-arma::ivec chooseActions(int seed, int time_step, PayoffData& data, const Params& params) {
+arma::ivec chooseActions(int time_step, PayoffData& data, const Params& params) {
    
     if (time_step == 0) {
         arma::ivec choices(P(params, "n"));
         std::uniform_int_distribution<> dist(0, P(params, "num_nodes") - 1);
+        std::random_device rd;
+        std::mt19937 gen(rd());
         for (int i = 0; i < P(params, "n"); ++i) {
-            std::mt19937 gen(seed + time_step + i);
             choices[i] = dist(gen);
         }
         return choices;
@@ -56,8 +58,10 @@ arma::ivec chooseActions(int seed, int time_step, PayoffData& data, const Params
 
         arma::ivec choices(P(params, "n"));
         std::uniform_real_distribution<> dist(0.0, 1.0);
+        std::random_device rd;
+        std::mt19937 gen(rd());
+
         for (arma::uword i = 0; i < P(params, "n"); ++i) {
-            std::mt19937 gen(seed + time_step + i + 1); 
             double rand_val = dist(gen);
             double cumulative_prob = 0.0;
             for (arma::uword j = 0; j < summed_payoffs.n_cols; ++j) {

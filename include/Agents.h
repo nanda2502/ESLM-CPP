@@ -2,12 +2,9 @@
 #define AGENTS_H
 
 
-#include <tuple>
-#include <random>
-#include <unordered_map>
+
 #include <armadillo>
 #include "Graph.h"
-#include "Utils.h"
 #include "Params.h"
 
 class Agents {
@@ -17,10 +14,10 @@ public:
     arma::mat competences;
     arma::ivec ages;
 
-    Agents(const Graph& graph, const Params& params, int seed);
+    Agents(const Graph& graph, const Params& params);
 
 private:
-    void initialize(const Graph& graph, const Params& params, int seed);
+    void initialize(const Graph& graph, const Params& params);
 };
 
 #endif // AGENTS_H

@@ -1,9 +1,7 @@
 #ifndef GRAPH_H
 #define GRAPH_H
 
-#include <random>
 #include <armadillo>
-#include "Utils.h"
 #include "Params.h"
 
 class Graph {
@@ -12,7 +10,8 @@ public:
     arma::vec node_payoffs;
     arma::field<arma::uvec> parents;
 
-    Graph(const Params& params, int seed);
+    Graph(const Params& params);
+    
     /**
      * Retrieves the parents of the specified children in the graph.
      *
@@ -21,7 +20,7 @@ public:
      */
     arma::field<arma::uvec> getParents(const arma::uvec& children) const;
 private:
-    void initialize(const Params& params, int seed);
+    void initialize(const Params& params);
     void createPayoffs();
     void populateParents();
 };

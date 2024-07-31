@@ -1,10 +1,10 @@
 #include "Agents.h"
 
-Agents::Agents(const Graph& graph, const Params& params, int seed) {
-    initialize(graph, params, seed);
+Agents::Agents(const Graph& graph, const Params& params) {
+    initialize(graph, params);
 }
 
-void Agents::initialize(const Graph& graph, const Params& params, int seed) {
+void Agents::initialize(const Graph& graph, const Params& params) {
     int num_nodes = graph.adjMat.n_cols;
     int n = P(params, "n");
 
@@ -13,8 +13,8 @@ void Agents::initialize(const Graph& graph, const Params& params, int seed) {
     arma::vec avg_competence = 1.0 - normalized_indegree;
 
     competences.set_size(n, num_nodes);
-    std::mt19937 gen(seed);
-
+    std::random_device rd;
+    std::mt19937 gen(rd());
     
     node_weights.set_size(n, num_nodes);
     for (arma::uword i = 0; i < num_nodes; ++i) {
