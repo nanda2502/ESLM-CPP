@@ -5,20 +5,20 @@ library(ggplot2)
 
 parameter_space <- expand.grid(
   repl = 1:5,
-  t = 1000,
+  t = 100,
   num_nodes = 16,
   n = 100,
   m = 10,
   edge_mean = 0.5,
   edge_var = 0.05,
-  edge_threshold = 0.5,
+  edge_threshold = 0.8,
   payoffs_mean = 0.5,
   competences_sd = 0.05,
   node_mean = 0.5,
   node_var = 0.05,
   agent_edge_sd = 0.05,
   cor_age_competence = 0.5,
-  experience_bias = 0.5,
+  experience_bias = 0.0,
   assortment = 0:2,
   strategy = 0:1
 )

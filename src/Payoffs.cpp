@@ -3,8 +3,8 @@
 #include "Payoffs.h"
 
 PayoffData::PayoffData(const Params& params)
-    : choices(P(params, "n"), P(params, "t")),
-      payoffs(P(params, "n"), P(params, "t")) {}
+    : choices(params.n, params.t),
+      payoffs(params.n, params.t) {}
 
 void PayoffData::saveToCSV(int argc, char* argv[]) {
     std::ostringstream oss;
@@ -22,11 +22,11 @@ void PayoffData::saveToCSV(int argc, char* argv[]) {
 arma::ivec chooseActions(int time_step, PayoffData& data, const Params& params) {
    
     if (time_step == 0) {
-        arma::ivec choices(P(params, "n"));
-        std::uniform_int_distribution<> dist(0, P(params, "num_nodes") - 1);
+        arma::ivec choices(params.n);
+        std::uniform_int_distribution<> dist(0, params.num_nodes - 1);
         std::random_device rd;
         std::mt19937 gen(rd());
-        for (int i = 0; i < P(params, "n"); ++i) {
+        for (int i = 0; i < params.n; ++i) {
             choices[i] = dist(gen);
         }
         return choices;
@@ -35,33 +35,33 @@ arma::ivec chooseActions(int time_step, PayoffData& data, const Params& params) 
         arma::rowvec time_factors = arma::regspace<arma::rowvec>(time_step, -1, time_step - weighted_payoffs.n_cols + 1);
         weighted_payoffs.each_row() /= time_factors;
 
-        arma::mat summed_payoffs = arma::zeros<arma::mat>(P(params, "n"), P(params, "num_nodes"));
+        arma::mat summed_payoffs = arma::zeros<arma::mat>(params.n, params.num_nodes);
         for (arma::uword j = 0; j < weighted_payoffs.n_cols; ++j) {
-            for (arma::uword i = 0; i < P(params, "n"); ++i) {
+            for (arma::uword i = 0; i < params.n; ++i) {
                 int node_id = data.choices(i, j);
                 summed_payoffs(i, node_id) += weighted_payoffs(i, j);
             }
         }
 
-        for (arma::uword i = 0; i < P(params, "n"); ++i) {
+        for (arma::uword i = 0; i < params.n; ++i) {
             double row_sum = arma::sum(summed_payoffs.row(i));
             summed_payoffs.row(i) /= row_sum;
         }
 
         //odds are determined partially by historical data and partially by a uniform distribution
-        double uniform_prob = 1.0 / P(params, "num_nodes");
+        double uniform_prob = 1.0 / params.num_nodes;
         for (arma::uword i = 0; i < summed_payoffs.n_rows; ++i) {
             for (arma::uword j = 0; j < summed_payoffs.n_cols; ++j) {
-                summed_payoffs(i, j) = P(params, "experience_bias") * summed_payoffs(i, j) + (1 - P(params, "experience_bias")) * uniform_prob;
+                summed_payoffs(i, j) = params.experience_bias * summed_payoffs(i, j) + (1 - params.experience_bias) * uniform_prob;
             }
         }
 
-        arma::ivec choices(P(params, "n"));
+        arma::ivec choices(params.n);
         std::uniform_real_distribution<> dist(0.0, 1.0);
         std::random_device rd;
         std::mt19937 gen(rd());
 
-        for (arma::uword i = 0; i < P(params, "n"); ++i) {
+        for (arma::uword i = 0; i < params.n; ++i) {
             double rand_val = dist(gen);
             double cumulative_prob = 0.0;
             for (arma::uword j = 0; j < summed_payoffs.n_cols; ++j) {

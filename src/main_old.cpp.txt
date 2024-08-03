@@ -39,7 +39,7 @@ int main(int arc, char* argv[]) {
 
     arma::umat groups = Assortment::createAssortment(agents, params); 
 
-    for (int time_step = 0; time_step < P(params, "t"); ++time_step) {
+    for (int time_step = 0; time_step < params.t; ++time_step) {
         arma::ivec choices = chooseActions(seed, time_step, payoff_data, params);
         std::cout << "Step " << time_step << " - Actions chosen, Size: " << choices.n_rows << "x" << choices.n_cols << std::endl;
         

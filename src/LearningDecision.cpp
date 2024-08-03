@@ -3,14 +3,14 @@
 
 
 arma::ivec learnSocially(int time, const PayoffData& data, const arma::umat& groups, const Params& params) {
-    arma::ivec final_choices(static_cast<arma::ivec::elem_type>(P(params, "n")));
+    arma::ivec final_choices(static_cast<arma::ivec::elem_type>(params.n));
     final_choices.fill(-1);
 
     for (arma::uword group_idx = 0; group_idx < groups.n_rows; ++group_idx) {
         arma::uvec group = groups.row(group_idx).t();
         arma::ivec group_choices;
 
-        double strategy = P(params, "strategy");
+        double strategy = params.strategy;
 
         if (strategy == 0) {
             group_choices = randomStrategy(data, group, time, params);
@@ -28,7 +28,7 @@ arma::ivec learnSocially(int time, const PayoffData& data, const arma::umat& gro
 }
 
 arma::ivec randomStrategy(const PayoffData& data, const arma::uvec& group, int time, const Params& params) {
-    std::uniform_int_distribution<> dis(0, P(params, "num_nodes") - 1);
+    std::uniform_int_distribution<> dis(0, params.num_nodes - 1);
     arma::ivec choices(group.n_elem);
     std::random_device rd;
     std::mt19937 gen(rd());

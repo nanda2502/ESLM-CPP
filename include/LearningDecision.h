@@ -7,7 +7,7 @@
 /**
  * This function simulates social learning in a group of agents. Agents choose what to learn based on 
  * the actions they observed other agents perform in the payoff stage of the current time step. Agents learn
- * their choices based on a specified strategy, which is chosen based on the P(params, "strategy") value:
+ * their choices based on a specified strategy, which is chosen based on the params.strategy value:
  *
  * @param time The current time step in the simulation.
  * @param data Reference to the PayoffData object containing payoff information.
